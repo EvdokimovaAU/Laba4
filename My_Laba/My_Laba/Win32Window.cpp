@@ -8,8 +8,7 @@ static void SetUserData(HWND hWnd, void* ptr)
 
 static Win32Window* GetUserData(HWND hWnd)
 {
-    return reinterpret_cast<Win32Window*>(
-        GetWindowLongPtrW(hWnd, GWLP_USERDATA));
+    return reinterpret_cast<Win32Window*>(GetWindowLongPtrW(hWnd, GWLP_USERDATA));
 }
 
 bool Win32Window::Create(HINSTANCE hInstance,
@@ -31,7 +30,7 @@ bool Win32Window::Create(HINSTANCE hInstance,
     if (!RegisterClassExW(&wc))
         return false;
 
-    RECT rect{ 0, 0, clientWidth, clientHeight };
+    RECT rect{ 0,0, clientWidth, clientHeight };
     AdjustWindowRect(&rect, WS_OVERLAPPEDWINDOW, FALSE);
 
     m_hWnd = CreateWindowExW(
@@ -42,8 +41,7 @@ bool Win32Window::Create(HINSTANCE hInstance,
         CW_USEDEFAULT, CW_USEDEFAULT,
         rect.right - rect.left,
         rect.bottom - rect.top,
-        nullptr,
-        nullptr,
+        nullptr, nullptr,
         hInstance,
         this
     );
@@ -53,18 +51,7 @@ bool Win32Window::Create(HINSTANCE hInstance,
 
     ShowWindow(m_hWnd, nCmdShow);
     UpdateWindow(m_hWnd);
-
     return true;
-}
-
-void Win32Window::SetInputDevice(InputDevice* input)
-{
-    m_input = input;
-}
-
-bool Win32Window::IsExitRequested() const
-{
-    return m_exitRequested;
 }
 
 LRESULT Win32Window::HandleMessage(UINT msg, WPARAM wParam, LPARAM lParam)
@@ -78,9 +65,7 @@ LRESULT Win32Window::HandleMessage(UINT msg, WPARAM wParam, LPARAM lParam)
         return 0;
 
     case WM_KEYDOWN:
-        if (m_input)
-            m_input->OnKeyDown(wParam);
-
+        if (m_input) m_input->OnKeyDown(wParam);
         if (wParam == VK_ESCAPE) {
             m_exitRequested = true;
             PostQuitMessage(0);
@@ -88,18 +73,14 @@ LRESULT Win32Window::HandleMessage(UINT msg, WPARAM wParam, LPARAM lParam)
         return 0;
 
     case WM_KEYUP:
-        if (m_input)
-            m_input->OnKeyUp(wParam);
+        if (m_input) m_input->OnKeyUp(wParam);
         return 0;
     }
 
     return DefWindowProcW(m_hWnd, msg, wParam, lParam);
 }
 
-LRESULT CALLBACK Win32Window::WndProc(HWND hWnd,
-    UINT msg,
-    WPARAM wParam,
-    LPARAM lParam)
+LRESULT CALLBACK Win32Window::WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
     if (msg == WM_CREATE)
     {

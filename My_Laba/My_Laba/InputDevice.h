@@ -12,4 +12,3 @@ public:
 private:
     std::unordered_map<WPARAM, bool> m_keys;
 };
-
